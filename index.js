@@ -1,7 +1,8 @@
 import http from "http";
 import dotenv from "dotenv";
 import express from "express";
-import { log } from "console";
+import fs from "fs";
+import {format} from "date-fns";
 
 
 const app = express();
@@ -17,6 +18,18 @@ app.get("/",(req,res)=>{
     res.status(200).send(`<h1 style="text-align:center;">Welcome to Backend </h1>`);
 })
 
+app.get("/file",(req,res)=>{
+    let today=format(new Date(),"dd-MM-yyyy-HH-mm-ss");
+    //console.log(today);
+    const filepath=`TimeStamps/${today}`;
+    fs.writeFileSync(filepath,`${today}`,"utf-8")
+    let data=fs.readFileSync(filepath,"utf-8")
+    try{
+        res.status(200).send(data);
+    }catch(error){
+        res.status(503).json({message:"Failed To Create A File"});
+    }
+})
 
 /* http.createServer((req,res)=>{
     res.writeHead(200,{"content-type":"text/plain"});
